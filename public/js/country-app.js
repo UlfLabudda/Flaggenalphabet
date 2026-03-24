@@ -10,6 +10,7 @@ const CONTINENT_DATA = {
     data: typeof AFRICA_COUNTRIES !== 'undefined' ? AFRICA_COUNTRIES : [],
     available: true
   },
+<<<<<<< HEAD
   asia: { label: 'Asien', data: [], available: false },
   europe: {
     label: 'Europa',
@@ -17,6 +18,11 @@ const CONTINENT_DATA = {
     available: true
   },
   north_america: { label: 'Nordamerika', data: [], available: false },
+=======
+  asia:          { label: 'Asien',        data: [], available: false },
+  europe:        { label: 'Europa',       data: [], available: false },
+  north_america: { label: 'Nordamerika',  data: [], available: false },
+>>>>>>> Südamerika
   south_america: {
     label: 'Südamerika',
     data: typeof SOUTH_AMERICA_COUNTRIES !== 'undefined' ? SOUTH_AMERICA_COUNTRIES : [],
