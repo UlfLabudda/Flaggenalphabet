@@ -84,9 +84,17 @@ function renderCountriesGrid() {
   updateSubnav();
   const continent = CONTINENT_DATA[activeContinent];
 
-  // Bundesländer-Ansicht
+  // Unteransichten
   if (activeContinent === 'europe' && activeSubview === 'bundeslaender') {
     renderBundeslaender();
+    return;
+  }
+  if (activeContinent === 'north_america' && activeSubview === 'us_states') {
+    renderUSStates();
+    return;
+  }
+  if (activeContinent === 'north_america' && activeSubview === 'canada_provinces') {
+    renderCanadaProvinces();
     return;
   }
 
@@ -181,14 +189,216 @@ function renderBundeslaender() {
   });
 }
 
+/* ── US-Bundesstaaten-Grid ───────────────────────────── */
+function renderUSStates() {
+  const states = typeof USA_STATES !== 'undefined' ? USA_STATES : [];
+  const list   = filterList(states, ['name', 'capital', 'governor', 'region']);
+
+  if (countryCountEl) {
+    countryCountEl.textContent = `${list.length} Bundesstaat${list.length !== 1 ? 'en' : ''}`;
+  }
+
+  if (list.length === 0) {
+    countriesGrid.innerHTML = '<p class="no-results">Kein Bundesstaat gefunden.</p>';
+    return;
+  }
+
+  countriesGrid.innerHTML = list.map((s, i) => `
+    <div class="country-card" data-us-state-index="${states.indexOf(s)}" role="button" tabindex="0"
+         aria-label="${s.name}">
+      <div class="country-flag-wrap state-flag-wrap">
+        <img src="${s.flagUrl}" alt="Flagge von ${s.name}" loading="lazy"
+             onerror="this.parentElement.innerHTML='<div class=\\'flag-fallback\\'>${s.name[0]}</div>'" />
+      </div>
+      <div class="country-card-info">
+        <div class="country-card-name">${s.name}</div>
+        <div class="country-card-capital">🏛 ${s.capital}</div>
+        <div class="country-card-pop">👥 ${formatPopulation(s.population)}</div>
+      </div>
+    </div>
+  `).join('');
+
+  countriesGrid.querySelectorAll('.country-card[data-us-state-index]').forEach(card => {
+    card.addEventListener('click', () => openUSStateModal(Number(card.dataset.usStateIndex)));
+    card.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') openUSStateModal(Number(card.dataset.usStateIndex));
+    });
+  });
+}
+
+/* ── Kanadische Provinzen-Grid ───────────────────────── */
+function renderCanadaProvinces() {
+  const provinces = typeof CANADA_PROVINCES !== 'undefined' ? CANADA_PROVINCES : [];
+  const list      = filterList(provinces, ['name', 'capital', 'premier', 'region']);
+
+  if (countryCountEl) {
+    countryCountEl.textContent = `${list.length} Provinz${list.length !== 1 ? 'en/Territorien' : '/Territorium'}`;
+  }
+
+  if (list.length === 0) {
+    countriesGrid.innerHTML = '<p class="no-results">Keine Provinz gefunden.</p>';
+    return;
+  }
+
+  countriesGrid.innerHTML = list.map(p => `
+    <div class="country-card" data-ca-province-index="${provinces.indexOf(p)}" role="button" tabindex="0"
+         aria-label="${p.name}">
+      <div class="country-flag-wrap state-flag-wrap">
+        <img src="${p.flagUrl}" alt="Flagge von ${p.name}" loading="lazy"
+             onerror="this.parentElement.innerHTML='<div class=\\'flag-fallback\\'>${p.name[0]}</div>'" />
+      </div>
+      <div class="country-card-info">
+        <div class="country-card-name">${p.name}</div>
+        <div class="country-card-capital">🏛 ${p.capital}</div>
+        <div class="country-card-pop">👥 ${formatPopulation(p.population)}</div>
+      </div>
+    </div>
+  `).join('');
+
+  countriesGrid.querySelectorAll('.country-card[data-ca-province-index]').forEach(card => {
+    card.addEventListener('click', () => openCanadaProvinceModal(Number(card.dataset.caProvinceIndex)));
+    card.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') openCanadaProvinceModal(Number(card.dataset.caProvinceIndex));
+    });
+  });
+}
+
+/* ── US-Bundesstaat-Modal ────────────────────────────── */
+function openUSStateModal(index) {
+  const states = typeof USA_STATES !== 'undefined' ? USA_STATES : [];
+  const s = states[index];
+  if (!s) return;
+
+  countryModalBody.innerHTML = `
+    <div class="cmodal-flag">
+      <img src="${s.flagUrl}" alt="Flagge von ${s.name}"
+           style="object-fit:contain;background:#f5f5f5;"
+           onerror="this.style.display='none'" />
+    </div>
+    <div class="cmodal-info">
+      <h2 class="cmodal-name">${s.name}</h2>
+      <span class="cmodal-region-badge">🇺🇸 ${s.region}</span>
+      <div class="cmodal-grid">
+        <div class="cmodal-item">
+          <span class="cmodal-icon">🏛</span>
+          <div><div class="cmodal-label">Hauptstadt</div>
+               <div class="cmodal-value">${s.capital}</div></div>
+        </div>
+        <div class="cmodal-item">
+          <span class="cmodal-icon">📅</span>
+          <div><div class="cmodal-label">Aufnahme in die Union</div>
+               <div class="cmodal-value">${s.founded}</div></div>
+        </div>
+        <div class="cmodal-item">
+          <span class="cmodal-icon">👥</span>
+          <div><div class="cmodal-label">Bevölkerung</div>
+               <div class="cmodal-value">${formatPopulation(s.population)}</div></div>
+        </div>
+        <div class="cmodal-item">
+          <span class="cmodal-icon">📐</span>
+          <div><div class="cmodal-label">Fläche</div>
+               <div class="cmodal-value">${s.area.toLocaleString('de-DE')} km²</div></div>
+        </div>
+        <div class="cmodal-item cmodal-item--full">
+          <span class="cmodal-icon">👤</span>
+          <div><div class="cmodal-label">Gouverneur/in</div>
+               <div class="cmodal-value">${s.governor}</div></div>
+        </div>
+        ${s.note ? `
+        <div class="cmodal-item cmodal-item--full cmodal-note">
+          <span class="cmodal-icon">ℹ️</span>
+          <div><div class="cmodal-label">Wissenswertes</div>
+               <div class="cmodal-value">${s.note}</div></div>
+        </div>` : ''}
+      </div>
+      <p class="cmodal-disclaimer">Stand: 2025 – Angaben können sich geändert haben.</p>
+    </div>
+  `;
+
+  countryModal.classList.remove('hidden');
+  document.getElementById('country-modal-close').focus();
+}
+
+/* ── Kanadische Provinz-Modal ────────────────────────── */
+function openCanadaProvinceModal(index) {
+  const provinces = typeof CANADA_PROVINCES !== 'undefined' ? CANADA_PROVINCES : [];
+  const p = provinces[index];
+  if (!p) return;
+
+  countryModalBody.innerHTML = `
+    <div class="cmodal-flag">
+      <img src="${p.flagUrl}" alt="Flagge von ${p.name}"
+           style="object-fit:contain;background:#f5f5f5;"
+           onerror="this.style.display='none'" />
+    </div>
+    <div class="cmodal-info">
+      <h2 class="cmodal-name">${p.name}</h2>
+      <span class="cmodal-region-badge">🍁 ${p.region}</span>
+      <div class="cmodal-grid">
+        <div class="cmodal-item">
+          <span class="cmodal-icon">🏛</span>
+          <div><div class="cmodal-label">Hauptstadt</div>
+               <div class="cmodal-value">${p.capital}</div></div>
+        </div>
+        <div class="cmodal-item">
+          <span class="cmodal-icon">📅</span>
+          <div><div class="cmodal-label">Beitritt zur Konföderation</div>
+               <div class="cmodal-value">${p.founded}</div></div>
+        </div>
+        <div class="cmodal-item">
+          <span class="cmodal-icon">👥</span>
+          <div><div class="cmodal-label">Bevölkerung</div>
+               <div class="cmodal-value">${formatPopulation(p.population)}</div></div>
+        </div>
+        <div class="cmodal-item">
+          <span class="cmodal-icon">📐</span>
+          <div><div class="cmodal-label">Fläche</div>
+               <div class="cmodal-value">${p.area.toLocaleString('de-DE')} km²</div></div>
+        </div>
+        <div class="cmodal-item cmodal-item--full">
+          <span class="cmodal-icon">👤</span>
+          <div><div class="cmodal-label">Premier/Premierministerin</div>
+               <div class="cmodal-value">${p.premier}</div></div>
+        </div>
+        ${p.note ? `
+        <div class="cmodal-item cmodal-item--full cmodal-note">
+          <span class="cmodal-icon">ℹ️</span>
+          <div><div class="cmodal-label">Wissenswertes</div>
+               <div class="cmodal-value">${p.note}</div></div>
+        </div>` : ''}
+      </div>
+      <p class="cmodal-disclaimer">Stand: 2025 – Angaben können sich geändert haben.</p>
+    </div>
+  `;
+
+  countryModal.classList.remove('hidden');
+  document.getElementById('country-modal-close').focus();
+}
+
+/* ── Zu Nordamerika-Unteransicht wechseln (aus Modal) ── */
+function switchToNorthAmericaSubview(subview) {
+  closeCountryModal();
+  activeSubview = subview;
+  document.querySelectorAll('#north-america-subnav .subnav-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.subnav === subview);
+  });
+  countrySearch = '';
+  if (countrySearchEl) countrySearchEl.value = '';
+  renderCountriesGrid();
+}
+
 /* ── Länder-Modal ────────────────────────────────────── */
 function openCountryModal(code) {
   const country = CONTINENT_DATA[activeContinent].data.find(c => c.code === code);
   if (!country) return;
 
+  let subviewFn = 'switchToBundeslaender()';
+  if (activeContinent === 'north_america' && country.subviewKey) {
+    subviewFn = `switchToNorthAmericaSubview('${country.subviewKey}')`;
+  }
   const subviewBtn = country.hasSubview ? `
-    <button class="cmodal-subview-btn" onclick="switchToBundeslaender()">
-      ${country.subviewLabel || '🗺 Bundesländer anzeigen'}
+    <button class="cmodal-subview-btn" onclick="${subviewFn}">
+      ${country.subviewLabel || '🗺 Details anzeigen'}
     </button>` : '';
 
   countryModalBody.innerHTML = `
