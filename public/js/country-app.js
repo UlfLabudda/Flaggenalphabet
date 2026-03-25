@@ -263,6 +263,44 @@ function renderCanadaProvinces() {
   });
 }
 
+/* ── Karibik-Grid ────────────────────────────────────── */
+function renderCaribbean() {
+  const all  = typeof NORTH_AMERICA_COUNTRIES !== 'undefined' ? NORTH_AMERICA_COUNTRIES : [];
+  const caribbean = all.filter(c => c.region === 'Karibik');
+  const list = filterList(caribbean, ['name', 'capital', 'president']);
+
+  if (countryCountEl) {
+    countryCountEl.textContent = `${list.length} ${list.length === 1 ? 'Land' : 'Länder'}`;
+  }
+
+  if (list.length === 0) {
+    countriesGrid.innerHTML = '<p class="no-results">Keine Länder gefunden.</p>';
+    return;
+  }
+
+  countriesGrid.innerHTML = list.map(c => `
+    <div class="country-card" data-code="${c.code}" role="button" tabindex="0"
+         aria-label="${c.name}">
+      <div class="country-flag-wrap">
+        <img src="${flagUrl(c.code)}" srcset="${flagUrl(c.code)} 1x, ${flagUrl2x(c.code)} 2x"
+             alt="Flagge von ${c.name}" loading="lazy" onerror="this.style.display='none'" />
+      </div>
+      <div class="country-card-info">
+        <div class="country-card-name">${c.name}</div>
+        <div class="country-card-capital">🏛 ${c.capital}</div>
+        <div class="country-card-pop">👥 ${formatPopulation(c.population)}</div>
+      </div>
+    </div>
+  `).join('');
+
+  countriesGrid.querySelectorAll('.country-card').forEach(card => {
+    card.addEventListener('click', () => openCountryModal(card.dataset.code));
+    card.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') openCountryModal(card.dataset.code);
+    });
+  });
+}
+
 /* ── US-Bundesstaat-Modal ────────────────────────────── */
 function openUSStateModal(index) {
   const states = typeof USA_STATES !== 'undefined' ? USA_STATES : [];
