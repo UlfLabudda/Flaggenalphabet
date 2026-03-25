@@ -25,6 +25,11 @@ const CONTINENT_DATA = {
     label: 'Südamerika',
     data: typeof SOUTH_AMERICA_COUNTRIES !== 'undefined' ? SOUTH_AMERICA_COUNTRIES : [],
     available: true
+  },
+  australia: {
+    label: 'Australien',
+    data: typeof AUSTRALIA_COUNTRIES !== 'undefined' ? AUSTRALIA_COUNTRIES : [],
+    available: true
   }
 };
 
@@ -41,6 +46,7 @@ const countryModal        = document.getElementById('country-modal');
 const countryModalBody    = document.getElementById('country-modal-body');
 const europeSubnav        = document.getElementById('europe-subnav');
 const northAmericaSubnav  = document.getElementById('north-america-subnav');
+const australiaSubnav     = document.getElementById('australia-subnav');
 
 /* ── Helpers ────────────────────────────────────────── */
 function formatPopulation(n) {
@@ -66,6 +72,13 @@ function updateSubnav() {
       northAmericaSubnav.classList.remove('hidden');
     } else {
       northAmericaSubnav.classList.add('hidden');
+    }
+  }
+  if (australiaSubnav) {
+    if (activeContinent === 'australia' && CONTINENT_DATA.australia.available) {
+      australiaSubnav.classList.remove('hidden');
+    } else {
+      australiaSubnav.classList.add('hidden');
     }
   }
 }
@@ -640,7 +653,7 @@ document.querySelectorAll('.continent-btn').forEach(btn => {
 });
 
 /* ── Sub-Navigation (Europa & Nordamerika) ───────────── */
-document.querySelectorAll('#europe-subnav .subnav-btn, #north-america-subnav .subnav-btn').forEach(btn => {
+document.querySelectorAll('#europe-subnav .subnav-btn, #north-america-subnav .subnav-btn, #australia-subnav .subnav-btn').forEach(btn => {
   btn.addEventListener('click', () => {
     // Nur Buttons innerhalb desselben Subnavs zurücksetzen
     btn.closest('nav').querySelectorAll('.subnav-btn').forEach(b => b.classList.remove('active'));
