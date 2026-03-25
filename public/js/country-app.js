@@ -10,7 +10,11 @@ const CONTINENT_DATA = {
     data: typeof AFRICA_COUNTRIES !== 'undefined' ? AFRICA_COUNTRIES : [],
     available: true
   },
-  asia: { label: 'Asien', data: [], available: false },
+  asia: {
+    label: 'Asien',
+    data: typeof ASIA_COUNTRIES !== 'undefined' ? ASIA_COUNTRIES : [],
+    available: true
+  },
   europe: {
     label: 'Europa',
     data: typeof EUROPE_COUNTRIES !== 'undefined' ? EUROPE_COUNTRIES : [],
