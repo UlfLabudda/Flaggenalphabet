@@ -97,6 +97,10 @@ function renderCountriesGrid() {
     renderCanadaProvinces();
     return;
   }
+  if (activeContinent === 'north_america' && activeSubview === 'central_america') {
+    renderCentralAmerica();
+    return;
+  }
   if (activeContinent === 'north_america' && activeSubview === 'caribbean') {
     renderCaribbean();
     return;
