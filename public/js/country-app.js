@@ -52,14 +52,21 @@ function formatPopulation(n) {
 function flagUrl(code)   { return `https://flagcdn.com/w160/${code}.png`; }
 function flagUrl2x(code) { return `https://flagcdn.com/w320/${code}.png`; }
 
-/* ── Subnav (Bundesländer) ───────────────────────────── */
+/* ── Subnav ──────────────────────────────────────────── */
 function updateSubnav() {
-  if (!europeSubnav) return;
-  if (activeContinent === 'europe' && CONTINENT_DATA.europe.available) {
-    europeSubnav.classList.remove('hidden');
-  } else {
-    europeSubnav.classList.add('hidden');
-    activeSubview = 'countries';
+  if (europeSubnav) {
+    if (activeContinent === 'europe' && CONTINENT_DATA.europe.available) {
+      europeSubnav.classList.remove('hidden');
+    } else {
+      europeSubnav.classList.add('hidden');
+    }
+  }
+  if (northAmericaSubnav) {
+    if (activeContinent === 'north_america' && CONTINENT_DATA.north_america.available) {
+      northAmericaSubnav.classList.remove('hidden');
+    } else {
+      northAmericaSubnav.classList.add('hidden');
+    }
   }
 }
 
@@ -338,10 +345,11 @@ document.querySelectorAll('.continent-btn').forEach(btn => {
   });
 });
 
-/* ── Europa Sub-Navigation (Länder / Bundesländer) ───── */
-document.querySelectorAll('.subnav-btn').forEach(btn => {
+/* ── Sub-Navigation (Europa & Nordamerika) ───────────── */
+document.querySelectorAll('#europe-subnav .subnav-btn, #north-america-subnav .subnav-btn').forEach(btn => {
   btn.addEventListener('click', () => {
-    document.querySelectorAll('.subnav-btn').forEach(b => b.classList.remove('active'));
+    // Nur Buttons innerhalb desselben Subnavs zurücksetzen
+    btn.closest('nav').querySelectorAll('.subnav-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     activeSubview = btn.dataset.subnav;
     countrySearch = '';
