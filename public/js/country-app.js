@@ -37,9 +37,10 @@ let countrySearch   = '';
 const countriesGrid    = document.getElementById('countries-grid');
 const countrySearchEl  = document.getElementById('country-search');
 const countryCountEl   = document.getElementById('country-count');
-const countryModal     = document.getElementById('country-modal');
-const countryModalBody = document.getElementById('country-modal-body');
-const europeSubnav     = document.getElementById('europe-subnav');
+const countryModal        = document.getElementById('country-modal');
+const countryModalBody    = document.getElementById('country-modal-body');
+const europeSubnav        = document.getElementById('europe-subnav');
+const northAmericaSubnav  = document.getElementById('north-america-subnav');
 
 /* ── Helpers ────────────────────────────────────────── */
 function formatPopulation(n) {
