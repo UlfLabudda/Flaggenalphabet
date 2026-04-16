@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(wc -l /c/dev/Git/Flaggenalphabet/js/flags-data.js /c/dev/Git/Flaggenalphabet/public/js/*.js)",
+      "Bash(node -e ' *)",
+      "Bash(node server.js)",
+      "Bash(curl -s http://localhost:3000)",
+      "Bash(npm install *)"
+    ]
+  }
+}
