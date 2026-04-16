@@ -1007,20 +1007,29 @@ if (countrySearchEl) {
   });
 }
 
-/* ── Modus-Umschalter (ICS ↔ Länderflaggen) ─────────── */
-const icsSection       = document.getElementById('ics-section');
-const countriesSection = document.getElementById('countries-section');
+/* ── Modus-Umschalter (ICS ↔ Länderflaggen ↔ Reedereien) */
+const icsSection        = document.getElementById('ics-section');
+const countriesSection  = document.getElementById('countries-section');
+const reedereienSection = document.getElementById('reedereien-section');
 
 document.querySelectorAll('.mode-btn').forEach(btn => {
   btn.addEventListener('click', () => {
     document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
+
+    icsSection.classList.add('hidden');
+    countriesSection.classList.add('hidden');
+    if (reedereienSection) reedereienSection.classList.add('hidden');
+
     if (btn.dataset.mode === 'countries') {
-      icsSection.classList.add('hidden');
       countriesSection.classList.remove('hidden');
       renderCountriesGrid();
+    } else if (btn.dataset.mode === 'reedereien') {
+      if (reedereienSection) {
+        reedereienSection.classList.remove('hidden');
+        if (typeof initReedereien === 'function') initReedereien();
+      }
     } else {
-      countriesSection.classList.add('hidden');
       icsSection.classList.remove('hidden');
     }
   });
